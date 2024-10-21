@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- displays site properly based on user's device -->
+
+		
+		<link rel="icon"type="image/png"sizes="32x32"href="./images/favicon-32x32. png"/>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Karla:ital,wght@0,200..800;1,200..800&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="style.css"/>
+		<link rel="stylesheet" href="css_dark_mode.css" />
+
+		<title>Frontend Mentor | Todo app</title>
+   <body>
+	<div class="container">
+		<div class="title">
+			<h1>TODO</h1>
+			<div class="theme-switch" title="sötétmód be/ki">
+				<img src="images/icon-moon.svg" id="dark" role="button" tabindex="0" alt="moon">
+				<img src="images/icon-sun.svg" id="light" role="button" tabindex="0" alt="sun">
+			</div>
+		</div>
+		<form class="form">
+			<input class="create-todo" id="create-todo" type="text" placeholder="Create a new todo..." >
+			<label for="create-todo" class="icon-style"></label>
+		</form>	
+		<div class="footerContainer">
+			<ul class="list-container"></ul>
+			<div class="footer">
+					<p id="item">0 item left</p>
+					<div class="filter">
+						<button id="all" class="selected">All</button>
+						<button id="active">Active</button>
+						<button id="completed">Completed</button>
+					</div>
+					<button id="clear">Clear Completed</button>
+			</div>
+		</div>
+		
+    </div>
+
+	<script>
+
+		
+		const footer = document.querySelectorAll(".footer button")
+		const clearBtn = document.getElementById("clear")
+		const input = document.getElementById("create-todo");
+		const listContainer = document.querySelector(".list-container");
+
+		function handleButtonClick(e) {
+			if( this !== clearBtn) {
+				footer.forEach(btn => btn.classList.remove("selected"))
+				e.target.classList.add("selected") 
+			}
+			
+		}
+
+		footer.forEach(item => {item.addEventListener("click", handleButtonClick)
+	})
+		function counter() {
+			const newTodoItems = Array.from(document.getElementsByTagName("li"));
+			const item = document.getElementById("item");
+			let count = 0;
+
+			newTodoItems.forEach(todo => {
+				const todoText = todo.querySelector("span");
+				if(!todoText.classList.contains("completed")) {
+					count++;
+				}
+			})
+			item.textContent = count < 2 ? `${count} item left` : `${count} items left` 
+		}
+		let todoItems = [];
+		let currentFilter = "all";
+		
+		const allBtn = document.getElementById("all");
+			allBtn.addEventListener("click", () => {
+				currentFilter = "all"
+				renderTodos()
+			});
+
+		const completedBtn = document.getElementById("completed");
+			completedBtn.addEventListener("click", () => {
+				currentFilter = "completed"
+				renderTodos()
+				
+			})
+
+			const activeBtn = document.getElementById("active");
+			activeBtn.addEventListener("click", () => {
+				currentFilter = "active"
+				renderTodos()
+				
+			})
+
+			const clearCompletedBtn = document.getElementById("clear");
+			clearCompletedBtn.addEventListener("click", () => {
+				for(let i = todoItems.length - 1; i >= 0; i--) {
+					if(todoItems[i].completed) {
+						todoItems.splice(i, 1)
+					}
+					renderTodos()
+				}
+			});
+
+		function renderTodos() {
+
+			listContainer.innerHTML = "";
+
+			const filterTodos = todoItems.filter(todo => {
+				if(currentFilter === "all") return true;
+				if(currentFilter === "active") return !todo.completed;
+				if(currentFilter === "completed") return todo.completed;
+			})
+			for(let i = 0; i < filterTodos.length; i++) {
+				const todo = filterTodos[i]
+
+				const newTodo = document.createElement("li");
+
+				newTodo.style.display = "flex"
+			 	newTodo.style.alignItems = "center"
+
+			const circle = document.createElement("div");
+				circle.classList.add( "circle");
+				if(todo.completed)  circle.classList.add("active");
+
+
+			const todoText = document.createElement("span");
+				todoText.textContent = todo.text;
+				todoText.setAttribute("tabindex", "0")
+				if (todo.completed) todoText.classList.add("completed");
+
+			const remove = document.createElement("div");
+				remove.classList.add("remove");
+				newTodo.append(circle, todoText, remove);
+
+			remove.addEventListener("click", (e) => {
+				e.stopPropagation(); 
+				todoItems.splice(i, 1); 
+				renderTodos(); 
+				counter(); 
+			});
+
+			function clickOrKey () {
+				todo.completed = !todo.completed
+				renderTodos(); 
+				counter();
+
+			}
+			newTodo.addEventListener("click",  clickOrKey);
+
+			newTodo.addEventListener("keydown", (e) => {
+				if(e.key === "Enter" || e.key === " ") {
+					clickOrKey(e)
+					e.preventDefault()
+				}
+			})
+			
+			listContainer.appendChild(newTodo);
+
+		}
+		}
+
+		input.addEventListener("keydown", (e) => {
+			if(e.key === "Enter") {
+				e.preventDefault()
+				const inputValue = input.value.trim();
+			
+			if(inputValue) {
+				todoItems.push({text: inputValue, completed: false})
+				input.value = "";
+				renderTodos();
+			}
+			counter()
+			}
+		})
+
+	
+
+		const light = document.getElementById("light");
+		const dark = document.getElementById("dark");
+
+		const savedTheme = localStorage.getItem("theme") || "dark";
+		
+
+			const themeSwitch = (theme) => {
+				if(theme === "light") {
+					localStorage.setItem("theme", "light");
+					light.style.display = "none";
+					dark.style.display = "block";
+					document.body.classList.remove("dark-mode");
+
+					return
+				}
+				localStorage.setItem("theme", "dark")
+				light.style.display = "block";
+				dark.style.display = "none";
+				document.body.classList.add("dark-mode");
+			}
+
+			
+			themeSwitch(savedTheme);
+
+		
+			
+			light.addEventListener("click", () => themeSwitch("light"));
+			dark.addEventListener("click", () => themeSwitch("dark"));
+
+
+			light.addEventListener("keydown", (e) => {
+				if(e.key === "Enter" || e.key === " ") {
+					themeSwitch("light")
+					
+				}
+			})
+
+			dark.addEventListener("keydown", (e) => {
+				if(e.key === "Enter"  || e.key === " ") {
+					themeSwitch("dark")
+					
+				}
+			})
+	
+	</script>
+	</body>
+</html>

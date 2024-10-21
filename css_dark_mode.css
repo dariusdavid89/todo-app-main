@@ -1,0 +1,56 @@
+.dark-mode {
+	background-color: var(--Very_Dark_Blue);
+	background-image: url(images/bg-desktop-dark.jpg);
+}
+
+.dark-mode input {
+	background-color: var(--Very_Dark_Grayish_Blue);
+	color: var(--Light_Grayish_Blue);
+}
+
+.dark-mode input::placeholder {
+	color: var(--Light_Grayish_Blue);
+}
+
+.dark-mode .footerContainer {
+	background-color: var(--Very_Dark_Grayish_Blue);
+	color: var(--Light_Grayish_Blue);
+}
+
+.dark-mode .filter {
+	background-color: var(--Very_Dark_Grayish_Blue);
+	color: var(--Light_Grayish_Blue);
+}
+.dark-mode .icon-style {
+	background-color: var(--Very_Dark_Grayish_Blue);
+	border: 1px solid var(--Dark_Grayish_Blue);
+}
+
+.dark-mode .circle {
+	background-color: var(--Very_Dark_Grayish_Blue);
+	border: 1px solid var(--Dark_Grayish_Blue);
+}
+
+.dark-mode .circle.active:hover {
+	border: 1px solid var(--BrightBlue);
+}
+
+.dark-mode .footer > * {
+	color: var(--Light_Grayish_Blue);
+}
+
+.dark-mode .footer button:hover {
+	color: var(--Very_Light_Gray);
+}
+
+.dark-mode #clear:hover {
+	color: var(--Light_Grayish_Blue_hover);
+}
+
+@media (max-width: 768px) {
+	body.dark-mode {
+		background-image: url(/images/bg-mobile-dark.jpg);
+		background-size: cover;
+		height: 18vh;
+	}
+}
